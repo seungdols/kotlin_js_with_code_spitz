@@ -8,5 +8,5 @@ pluginManagement {
     }
 }
 rootProject.name = 'root'
-include 'app'
-include 'lib'
+include ':app'
+include ':lib'
