@@ -8,4 +8,4 @@ fun hello() {
     println("Hello")
 }
 
-fun test() = "abc"
+fun test() = "hello"
