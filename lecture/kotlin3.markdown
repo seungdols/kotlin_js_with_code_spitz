@@ -114,3 +114,85 @@ val v2 = v1?.let(double(it)) ?: 0
 
 `?:`는 elvis operator 라고 부른다. 
 
+## Request Builder 
+
+```kotlin
+
+// before
+val request = RequestBuilder("http://apiServer")
+              .method(Method.POST)
+              .form("name", "seungdols")
+              .form("email", "seungdols0822@gmail.com")
+              .timeout(5000)
+              .ok{}
+              .fail{}
+              .build()
+
+alias listener = (String) -> Unit
+class Method{POST, GET}
+
+class RequestBuilder(private val url:String) {
+    private var method: Method = Method.GET
+    private val form = mutableMapOf<String, String>()
+    private var timeout = 0
+    private var ok:listener? = null
+    private var fail:listener? = null
+    fun method(method: Method) {this.method = method}
+    fun form(key: String, value: String){this.form[key] = value}
+    fun timeout(ms:Int){this.timeout = ms}
+    fun ok(block:listener){this.ok = block}
+    fun fial(block: listener){this.fail = block}
+    fun build() = Reuqest(url, method, form.takeIf{it.isNotEmpty()}, timeout, ok, faile) 
+}
+
+// after 
+
+val request = with(RequestBuilder()){
+   method(Method.POST)
+    form("name", "seungdols")
+    form("email", "seungdols0822@gmail.com")
+    timeout(5000)
+    ok{}
+    fail{}
+    build()
+}
+
+
+fun RequestBuilder(url:String, block: RequestBuilder.()-> Unit) = RequestBuilder(url).apply(block).build()
+
+class RequestBuilder(private val url:String) {
+    var method: Method = Method.GET
+    private val form = mutableMapOf<String, String>()
+    var timeout = 0
+    var ok:listener? = null
+    var fail:listener? = null
+    fun form(key: String, value: String){this.form[key] = value}
+}
+```
+
+class instance 생성시 `new`를 통해 생성하지 않는다. 그냥 함수 호출처럼 사용하면 된다. 
+
+## typealias 
+
+```kotlin
+(String) -> Unit 
+
+alias listener = (String) -> Unit
+```
+
+복잡하게 쓰이는 경우나, 반복 되는 경우 type에 대한 별칭을 지정할 수 있다. 그런데, 이름을 지정 할 수 있으니 가독성이 좋아지는 장점이 있다. 특히, 람다에 대해서 사용하는 것이 좋다. 
+
+
+특정 공간이 특정 객체의 도메인 공간이 되도록 
+수신함수를 이용해 DSL을 구축하고, DSL 공간에서 특정 객체의 어휘만 이용 하는 것이 kotlin DSL의 방식인데, 중요한건 주로 method chain도 드물다. 
+
+```kotlin
+val matches = rex.matchEntire(v.substring(0, next))?.groupValues!!
+```
+
+`!!`는 `not-null assertion operator`라고 하는데, `NPE`를 throw 해준다. 본래는 `try - catch`로 감싸서 처리를 해야 한다. 
+
+
+`tailrec`의 키워드를 붙이면, 완전한 재귀함수는 for문으로 변경 된다. (컴팡일러가 알아서 바꿔준다.) 다만, Java만 해당 된다. 
+
+`tailrec`의 형태로 작성하는 경우 리턴 되는 타입 형을 지정 해주는 습관을 들이면 좋다. 
