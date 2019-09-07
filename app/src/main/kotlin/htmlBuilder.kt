@@ -28,11 +28,11 @@ abstract class El(val tagName: String) {
     operator fun set(key: String, value: Any) = el.setAttribute(key, "$value")
     operator fun invoke() = el
     operator fun plusAssign(child: El) {
-        el.appendChild(child.el)
+        el.appendChild(child())
     }
 
     operator fun minusAssign(child: El) {
-        el.removeChild(child.el)
+        el.removeChild(child())
     }
 
     val style: CSSStyleDeclaration get() = el.style
