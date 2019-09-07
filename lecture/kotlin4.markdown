@@ -121,3 +121,98 @@ class MapTest {
  * lazy는 실제 값을 미리 만들지 않고, 해당 값이 속성으로 최초 사용 할 시점에 생성 된다. (즉 name은 class 생성 시점과는 무관하다고 이해 하면 될까?)
   
 
+
+## static
+
+```kotlin
+class Parent {
+    companion object {
+        fun action() {}
+    }
+}
+```
+
+`kotlin`에서는 `companion object`를 만들고 그 안에서 선언하게 되면 모두 `static`이 된다. 
+
+## anonymous class 
+
+```java
+abstract class Parent {
+
+}
+Parent child1 = new Parent(){}
+```
+
+```javascript
+const Parent = class{}
+const instance = new (class extends Parent{})()
+```
+
+```kotlin
+abstract class Parent 
+class ClassTest2{
+    val child1 = object:Parent(){}
+}
+```
+`object`라는 키워드에 익명 클래스에 인스턴스까지 생성 하는 일을 하는데, `object expression`이라고도 부른다. 
+
+```kotlin
+object Child1:Parent(){} // object declaration
+```
+
+## singleton 
+
+```kotlin
+class SingleTon {
+    companion object {
+    val INSTANCE by lazy{SingleTon()}    
+    }
+}
+
+object Child1:Parent(){}
+
+class Child1:Parent() {
+    companion object{
+        val INSTANCE by lazy{Child1()}    
+    }
+}
+```
+
+`object` 키워드를 사용 할 때는 컴파일 타임에는 존재 하지만, 런타임에는 호출 하기 이전 까지는 생성 되지 않는다. 
+그리고, 원래는 아래처럼 명시적인 코드를 `object` 키워드 하나로 다 처리 해준다. (JVM에서는 동기 처리까지 모두 해줌)
+
+## sealed class & enum 
+
+```kotlin
+enum class Color(val code: String) {
+    Red("#f00"), Blue("#00f"), Green("#0f0")
+}
+```
+
+단점은 초기화가 오래 걸린다. (안드로이드에서는 쥐약) 자바스크립트에서는 어차피 가짜 구조라 상관 없다. 
+
+```kotlin
+abstract class Color(val code: String) {
+    object Red:Color("#f00")
+    object Blue:Color("#00f")
+    object Green:Color("0f0")
+}
+```
+
+원래는 `object`가 `companion` 하위로 들어가야 하는데, 코틀린 언어단에서 축약 해준다. 
+
+
+```kotlin
+sealed class Color(val code: String) {
+    object Red:Color("#f00")
+    object Blue:Color("#00f")
+    object Green:Color("0f0")
+    class Custom(code: String):Color(code) // nested object (ok)
+}
+
+object Yellow:Color("#ff0") // X 
+```
+
+`sealed class`로 만들면 더 이상의 상속 객체가 생기는 것을 막을 수 있다. 코틀린에서는 `enum class` 보다 보통 `sealed class`를 권장 한다.
+
+

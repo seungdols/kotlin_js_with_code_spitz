@@ -24,6 +24,8 @@ fun main(args: Array<String>) {
         this["lastName"] = "choi"
         fullName
     })
+
+    htmlBuilder()
 }
 
 fun parse() {
