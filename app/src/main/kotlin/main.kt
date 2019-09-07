@@ -25,7 +25,8 @@ fun main(args: Array<String>) {
         fullName
     })
 
-    htmlBuilder()
+//    htmlBuilder()
+    testFetch()
 }
 
 fun parse() {
