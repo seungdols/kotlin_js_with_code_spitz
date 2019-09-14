@@ -1,3 +1,5 @@
+import kotlin.properties.Delegates
+
 /**
  *
  * @PACKAGE
@@ -19,14 +21,55 @@ fun main(args: Array<String>) {
         "job: $job, name: $name"
     })
     println(MapTest().run {
-//        fullName
+        //        fullName
         this["firstName"] = "seungdols"
         this["lastName"] = "choi"
         fullName
     })
 
 //    htmlBuilder()
-    testFetch()
+//    testFetch()
+
+//    val list = ListA().plus("ABC")
+//    val list = ListA() + "ABC"
+    val list = ListA() + "ABC" add "def"
+    println(list[0] + ", " + list[1])
+
+//    val listCombine = 10 combine 20
+//    println("${JSON.stringify(listCombine)}")
+    val listCombine = 10 combine 20 combine 30 combine 40 combine mutableListOf(10,20)
+    println("${JSON.stringify(listCombine)}")
+
+    val v = NotNull()
+    v.action("abc")
+
+    val d = CustomDele("^___^;")
+    d.action("seungdols")
+
+    val l = CustomImmun("seungdols")
+    println(l)
+
+    val map = CustomKeys(mapOf("a" to 2, "b" to 3))
+    println("${JSON.stringify(map.keys)}")
+}
+
+infix fun <T> T.combine(v: T) = mutableListOf(this, v)
+infix fun <T> MutableList<T>.combine(v:T) = run {
+    this += v
+    this
+}
+infix fun <T> MutableList<T>.combine(v:MutableList<T>)  = run {
+    this += v
+    this
+}
+
+class NotNull {
+//    var a: String by Delegates.notNull()
+    lateinit var a: String
+    fun action(v: String) {
+        a = v
+        println(a)
+    }
 }
 
 fun parse() {
@@ -63,3 +106,15 @@ class MapTest {
         }
     val fullName by lazy { map["firstName"] + " " + map["lastName"] }
 }
+
+class ListA {
+    val list = mutableListOf<String>()
+    operator fun get(i: Int) = list[i]
+    operator fun plus(b: String) = run {
+        list += b
+        this
+    }
+
+    infix fun add(b: String) = plus(b)
+}
+
